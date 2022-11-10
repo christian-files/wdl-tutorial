@@ -125,8 +125,8 @@ workflow BWA {
 ```
 The workflow is now complete! Now, onto creating the tasks for the workflow to execute.
 
-## Step 2. Tasks:
-# 1. align
+# Step 2. Tasks:
+## 1. align
 This task will align the reads, using bwa mem.
 Here is the skeleton script for the task:
 ```
@@ -170,4 +170,82 @@ task align {
 	}
 ```
 
+## 2. sort
+This task will take the output from the first task as an input
+Task Skeleton:
+```
+version 1.0
 
+task sort {
+	Inputs/Variables
+	command {...}
+	runtime {...}
+	output {...}
+}
+```
+
+Add the variables:
+```
+version 1.0
+
+task sort {
+	String sample_name
+	File infile
+	...
+}
+```
+
+Add the command:
+```
+version 1.0
+
+... 
+	command <<<
+		java -jar picard.jar \
+			SortSam \
+			I=${infile} \
+			O=${sample_name}.sorted.bam \
+			SORT_ORDER=coordinate \
+			CREATE_INDEX=true
+	>>>
+...
+}
+```
+
+Adding outputs:
+```
+version 1.0
+
+...
+	output {
+		 File outbam = "${sample_name}.sorted.bam"
+		 File outbamidx = "${sample_name}.sorted.bai"
+	}
+....
+```
+
+The complete task should look like:
+```
+version 1.0
+
+task sort {
+	String sample_name
+	File infile
+	
+	command <<<
+		java -jar picard.jar \
+			SortSam \
+			I=${infile} \
+			O=${sample_name}.sorted.bam \
+			SORT_ORDER=coordinate \
+			CREATE_INDEX=true
+	>>>
+	
+	output {
+		 File outbam = "${sample_name}.sorted.bam"
+		 File outbamidx = "${sample_name}.sorted.bai"
+	}
+}
+```
+
+The complete script can be found in the root folder of this repo.
