@@ -4,6 +4,7 @@ A quick intro on how to use WDL
 ## Dependencies:
 - The latest version of [cromwell and womtool](https://github.com/broadinstitute/cromwell/releases)
 - Java
+- Docker
 
 ## WDL Basics:
 There are 5 basic components that form the core structure of a WDL script: 
@@ -56,5 +57,117 @@ You should see an output of the following in a similar directory structure `crom
 
 `Hello, World! 5`
 
+
+# Advanced WDL
+In this section, we will create a workflow and tasks that utilise an `inputs.json`.
+You do not have to run this part. This section is purely for reference.
+
+## Step 1. Workflow:
+Let's begin with the workflow skeleton. We will call our workflow `BWA` that calls two tasks: `align` and `sort`:
+`main.wdl`
+```
+version 1.0
+
+workflow BWA {
+    call align { input: }
+    call sort { input: }
+}
+```
+
+Next, we want to link the tasks together. We can do this by taking the output from `align` and channeling that into `sort`:
+`main.wdl`
+```
+version 1.0
+
+workflow BWA {
+    call align { input: }
+    call sort { 
+        input: 
+            infile = align.out
+    }
+}
+```
+
+Now, let's add the inputs for our first task, as well as a few variables each task is going to need:
+`main.wdl`
+```
+version 1.0
+
+workflow BWA {
+    String sample_name
+    File r1fastq
+    File r2fastq
+    File ref_fasta
+    File ref_fasta_amb
+    File ref_fasta_sa
+    File ref_fasta_bwt
+    File ref_fasta_ann
+    File ref_fasta_pac
+
+    call align { 
+        input:
+            sample_name = sample_name,
+            r1fastq = r1fastq,
+            r2fastq = r2fastq,
+            ref_fasta = ref_fasta,
+            ref_fasta_amb = ref_fasta_amb,
+            ref_fasta_sa = ref_fasta_sa,
+            ref_fasta_bwt = ref_fasta_bwt,
+            ref_fasta_ann = ref_fasta_ann,
+            ref_fasta_pac = ref_fasta_pac
+    }
+    call sort { 
+        input: 
+            infile = align.out,
+            sample_name = sample_name
+    }
+}
+```
+The workflow is now complete! Now, onto creating the tasks for the workflow to execute.
+
+## Step 2. Tasks:
+# 1. align
+This task will align the reads, using bwa mem.
+Here is the skeleton script for the task:
+```
+version 1.0
+
+task align {
+    Inputs/Variables
+    command {...}
+    runtime {...}
+    output {...}
+}
+```
+This skeleton will be the same for every task that is created using WDL.
+
+Let's fill in the skeleton script:
+```
+version 1.0
+
+task align {
+	String sample_name
+	File r1fastq
+	File r2fastq
+	File ref_fasta
+	File ref_fasta_amb
+	File ref_fasta_sa
+	File ref_fasta_bwt
+	File ref_fasta_ann
+	File ref_fasta_pac
+	Int threads
+
+	command {
+		bwa mem -M -t ${threads} ${ref_fasta} ${r1fastq} ${r2fastq} > ${sample_name}.sam
+	}
+
+	runtime {
+		cpus: threads
+		memory: 16GB
+	}
+	output {
+		File out = "${sample_name}.sam"
+	}
+```
 
 
