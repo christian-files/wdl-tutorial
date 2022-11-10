@@ -1,0 +1,13 @@
+{
+  "BWA.ref_fasta_sa": "File",
+  "BWA.r1fastq": "File",
+  "BWA.sample_name": "String",
+  "BWA.ref_fasta_amb": "File",
+  "BWA.align.threads": "Int",
+  "BWA.ref_fasta_ann": "File",
+  "BWA.ref_fasta": "File",
+  "BWA.ref_fasta_pac": "File",
+  "BWA.r2fastq": "File",
+  "BWA.ref_fasta_bwt": "File"
+}
+

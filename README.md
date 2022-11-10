@@ -14,6 +14,9 @@ There are 5 basic components that form the core structure of a WDL script:
 - **command** - is a required property of a task. The body of the command block specifies the literal command line to run (basically any command that you could otherwise run in a terminal shell) 
 - **output** - is used to explicitly identify the output(s) of the task command for the purpose of flow control. The outputs identified here will be used to build the workflow graph, so it is important to include all outputs that are used as inputs to other tasks in the workflow
 
+## Further Documentation:
+- [cromwell](https://cromwell.readthedocs.io/en/stable/)
+- [wdl](https://github.com/openwdl/wdl/blob/main/versions/1.0/SPEC.md)
 
 # Running a Basic Script
 `hello_file.wdl` - copy and paste below script into your local machine and then run the following: `java -jar cromwell-XY.jar run hello_file.wdl` (XY being the version number).
@@ -249,3 +252,34 @@ task sort {
 ```
 
 The complete script can be found in the root folder of this repo.
+
+
+# Validate
+Once the WDL pipeline has been created you can lint the code using womtool:
+`java -jar womtool-XY.jar validate main.wdl`
+This will return `Success!` if there are no syntax errors. The alternative is womtool returning an error message, suggesting that your syntax is not correct.
+
+# Specify Inputs
+The pipeline has been written and validated, it is now time to create an `inputs.json` that will populate the inputs and variables. Again, this is created using womtool:
+`java -jar womtool-XY.jar inputs main.wdl > inputs.wdl`
+
+You will be given a template of what the `inputs.json` should look like and the types of data that needs to go into each input.
+Your output will look like something below:
+```
+{
+  "BWA.ref_fasta_sa": "File",
+  "BWA.r1fastq": "File",
+  "BWA.sample_name": "String",
+  "BWA.ref_fasta_amb": "File",
+  "BWA.align.threads": "Int",
+  "BWA.ref_fasta_ann": "File",
+  "BWA.ref_fasta": "File",
+  "BWA.ref_fasta_pac": "File",
+  "BWA.r2fastq": "File",
+  "BWA.ref_fasta_bwt": "File"
+}
+```
+
+# Execute
+The final thing to do is to execute and run your script:
+`java -jar cromwell-XY.jar run main.wdl`
