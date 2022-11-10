@@ -97,15 +97,17 @@ Now, let's add the inputs for our first task, as well as a few variables each ta
 version 1.0
 
 workflow BWA {
-    String sample_name
-    File r1fastq
-    File r2fastq
-    File ref_fasta
-    File ref_fasta_amb
-    File ref_fasta_sa
-    File ref_fasta_bwt
-    File ref_fasta_ann
-    File ref_fasta_pac
+	input {
+	    String sample_name
+	    File r1fastq
+	    File r2fastq
+	    File ref_fasta
+	    File ref_fasta_amb
+	    File ref_fasta_sa
+	    File ref_fasta_bwt
+	    File ref_fasta_ann
+	    File ref_fasta_pac
+	}
 
     call align { 
         input:
@@ -149,17 +151,19 @@ Let's fill in the skeleton script:
 version 1.0
 
 task align {
-	String sample_name
-	File r1fastq
-	File r2fastq
-	File ref_fasta
-	File ref_fasta_amb
-	File ref_fasta_sa
-	File ref_fasta_bwt
-	File ref_fasta_ann
-	File ref_fasta_pac
-	Int threads
-
+	input {
+		String sample_name
+		File r1fastq
+		File r2fastq
+		File ref_fasta
+		File ref_fasta_amb
+		File ref_fasta_sa
+		File ref_fasta_bwt
+		File ref_fasta_ann
+		File ref_fasta_pac
+		Int threads
+	}
+	
 	command {
 		bwa mem -M -t ${threads} ${ref_fasta} ${r1fastq} ${r2fastq} > ${sample_name}.sam
 	}
@@ -168,6 +172,7 @@ task align {
 		cpus: threads
 		memory: 16GB
 	}
+	
 	output {
 		File out = "${sample_name}.sam"
 	}
@@ -192,8 +197,10 @@ Add the variables:
 version 1.0
 
 task sort {
-	String sample_name
-	File infile
+	input {
+		String sample_name
+		File infile
+	}
 	...
 }
 ```
@@ -232,8 +239,10 @@ The complete task should look like:
 version 1.0
 
 task sort {
-	String sample_name
-	File infile
+	input {
+		String sample_name
+		File infile
+	}
 	
 	command <<<
 		java -jar picard.jar \
