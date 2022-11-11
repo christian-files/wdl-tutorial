@@ -61,12 +61,13 @@ You should see an output of the following in a similar directory structure `crom
 `Hello, World! 5`
 
 
-# Advanced WDL
+# Basic WDL bioinformatics example
 In this section, we will create a workflow and tasks that utilise an `inputs.json`.
 You do not have to run this part. This section is purely for reference.
 
 ## Step 1. Workflow:
 Let's begin with the workflow skeleton. We will call our workflow `BWA` that calls two tasks: `align` and `sort`:
+
 `main.wdl`
 ```
 version 1.0
@@ -78,6 +79,7 @@ workflow BWA {
 ```
 
 Next, we want to link the tasks together. We can do this by taking the output from `align` and channeling that into `sort`:
+
 `main.wdl`
 ```
 version 1.0
@@ -92,6 +94,7 @@ workflow BWA {
 ```
 
 Now, let's add the inputs for our first task, as well as a few variables each task is going to need:
+
 `main.wdl`
 ```
 version 1.0
