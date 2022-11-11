@@ -19,12 +19,15 @@ task task_1 {
       String phrase
       Int mem_gb
     }
+    
     command {
         echo ${phrase} ${mem_gb}
     }
+    
     output {
         File result = stdout()
     }
+    
     runtime {
         docker: "ubuntu:latest"    
         memory: mem_gb + "GB"
